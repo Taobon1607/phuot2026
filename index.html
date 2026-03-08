@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Phượt 2026">
+<meta name="theme-color" content="#2B5F8E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Phượt Miền Trung 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F0;--surface:#fff;--border:#E8E4DC;
+  --text:#1A1814;--t2:#6B6560;--t3:#9B9590;
+  --accent:#2B5F8E;--alt:#EBF2F9;
+  --warn:#C45000;--wlt:#FEF3EB;
+  --green:#1F6B3A;--glt:#EBF5EF;
+  --r:14px;--sh:0 2px 12px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+.hdr{background:var(--accent);color:#fff;padding:calc(44px + env(safe-area-inset-top)) 20px 18px;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.hdr-lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-bottom:5px}
+.hdr-title{font-family:'DM Serif Display',serif;font-size:26px;line-height:1.2}
+.hdr-sub{font-size:13px;opacity:.75;margin-top:5px}
+.chips{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,0.15);border-radius:20px;padding:4px 11px;font-size:11.5px;font-weight:500}
+.info-bar{background:#1a4f7a;padding:7px 16px;display:flex;align-items:center;justify-content:space-between}
+.info-bar-txt{font-size:11px;color:rgba(255,255,255,0.75)}
+.info-bar-note{font-size:10px;color:rgba(255,255,255,0.5);margin-top:1px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 2px 8px;cursor:pointer;border:none;background:none;color:var(--t3);font-size:9.5px;font-family:'DM Sans',sans-serif;transition:color .2s}
+.nb.on{color:var(--accent)}
+.ni{font-size:21px;line-height:1;margin-bottom:3px}
+.sec{display:none;padding:16px}
+.sec.on{display:block}
+.sec-title{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px;margin-top:4px}
+.sec-sub{font-size:13px;color:var(--t2);margin-bottom:16px}
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.chdr{padding:14px 16px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.cht{flex:1}
+.cht-title{font-weight:600;font-size:15px}
+.cht-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.chev{color:var(--t3);transition:transform .25s;font-size:14px}
+.card.open .chev{transform:rotate(180deg)}
+.cbody{display:none;padding:0 16px 14px;border-top:1px solid var(--border)}
+.card.open .cbody{display:block}
+.db{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;font-weight:700;font-size:14px;flex-shrink:0}
+.tl{padding:10px 0}
+.tr{display:flex;gap:12px;padding:6px 0;position:relative}
+.tr:not(:last-child)::after{content:'';position:absolute;left:14px;top:28px;width:1px;bottom:-6px;background:var(--border)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px;position:relative;z-index:1}
+.dot.w{background:var(--warn)}
+.tt{font-size:12px;font-weight:600;color:var(--accent);width:44px;flex-shrink:0;padding-top:1px}
+.tb{flex:1}
+.tm{font-size:14px;font-weight:500;line-height:1.4}
+.tn{font-size:12px;color:var(--t2);margin-top:2px}
+.mr{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mr:last-child{border-bottom:none}
+.mdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.mi{flex:1}
+.mname{font-weight:600;font-size:14px}
+.msub{font-size:12px;color:var(--t2);margin-top:1px}
+.mbtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block}
+.sublbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);font-weight:600;padding:14px 16px 0}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.wc{background:var(--wlt);border-radius:var(--r);border-left:4px solid var(--warn);padding:12px 14px;margin-bottom:10px}
+.wct{font-weight:700;font-size:14px;color:var(--warn);margin-bottom:4px}
+.wcb{font-size:13px;line-height:1.6}
+.ic{background:var(--alt);border-radius:var(--r);border-left:4px solid var(--accent);padding:12px 14px;margin-bottom:10px}
+.ict{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:4px}
+.icb{font-size:13px;line-height:1.6}
+.csec{margin-bottom:14px}
+.clbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:8px}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.crow:last-child{border-bottom:none}
+.cname{font-size:14px}
+.chint{font-size:11px;color:var(--t3);margin-top:1px}
+.camt{font-weight:600;font-size:14px;text-align:right;white-space:nowrap}
+.ctotal{display:flex;justify-content:space-between;align-items:center;background:var(--accent);border-radius:10px;padding:14px 16px;margin-top:4px}
+.ctl{color:#fff;font-weight:600;font-size:14px}
+.cta{color:#fff;font-weight:700;font-size:17px}
+/* HOTEL */
+.hic{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.hic-hdr{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.hic-badge{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.hic-info{flex:1}
+.hic-title{font-weight:600;font-size:15px}
+.hic-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.sbadge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;white-space:nowrap}
+.hic-body{padding:14px 16px}
+.htimes{display:flex;gap:14px;margin-bottom:10px}
+.htime{font-size:12px}
+.htime span{color:var(--t3)}
+.htime b{color:var(--text)}
+.badge{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;margin-bottom:10px}
+.bw{background:var(--wlt);color:var(--warn)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:none;height:60px}
+.frow{display:flex;gap:10px}
+.frow .field{flex:1;margin-bottom:0}
+.save-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px}
+.saved-block{background:var(--glt);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.si-row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;align-items:baseline}
+.si-row:last-child{margin-bottom:0}
+.si-ico{width:18px;flex-shrink:0}
+.si-lbl{color:var(--t2);width:62px;flex-shrink:0;font-size:12px}
+.si-val{font-weight:500;flex:1;word-break:break-all}
+.edit-btn{width:100%;background:none;border:1.5px solid var(--border);border-radius:10px;padding:9px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--t2)}
+/* EXPENSES */
+.exp-summary{background:var(--accent);border-radius:12px;padding:16px;margin-bottom:14px}
+.exp-top{display:flex;justify-content:space-between;margin-bottom:12px}
+.es-lbl{color:rgba(255,255,255,0.75);font-size:12px;margin-bottom:3px}
+.es-val{color:#fff;font-weight:700;font-size:20px}
+.es-sub{color:rgba(255,255,255,0.6);font-size:11px;margin-top:2px}
+.family-split{display:flex;gap:8px}
+.fs-item{flex:1;background:rgba(255,255,255,0.12);border-radius:8px;padding:8px 10px;text-align:center}
+.fs-name{color:rgba(255,255,255,0.7);font-size:10px;margin-bottom:3px}
+.fs-amt{color:#fff;font-weight:700;font-size:13px}
+.add-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:12px}
+.exp-form{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:12px;display:none}
+.exp-form.show{display:block}
+.cat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cat-btn{width:42px;height:42px;border-radius:9px;border:2px solid var(--border);background:none;font-size:19px;cursor:pointer;transition:all .15s}
+.cat-btn.on{border-color:var(--accent);background:var(--alt)}
+.sel-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;-webkit-appearance:none;appearance:none}
+.submit-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
+.day-grp{margin-bottom:14px}
+.day-grp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px}
+.day-grp-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px}
+.day-grp-total{font-size:12px;font-weight:700;color:var(--accent)}
+.exp-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-ico{width:34px;height:34px;border-radius:9px;background:#F0F4F8;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.exp-info{flex:1;min-width:0}
+.exp-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-meta{font-size:11px;color:var(--t2);margin-top:2px}
+.exp-right{text-align:right;flex-shrink:0}
+.exp-amt{font-weight:700;font-size:14px}
+.exp-fam{font-size:10px;color:var(--t3);margin-top:1px}
+.exp-del{background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1}
+.empty{text-align:center;padding:32px 16px;color:var(--t2)}
+.empty-ico{font-size:38px;margin-bottom:10px}
+.empty-txt{font-size:14px;line-height:1.7}
+.local-note{background:#FBF6E8;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#8B6914;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-lbl">3 gia đình cùng phượt</div>
+  <div class="hdr-title">Phượt Miền Trung<br><em>2026</em></div>
+  <div class="hdr-sub">25/04 – 02/05 • 9 ngày • 6 người lớn + 6 trẻ em</div>
+  <div class="chips">
+    <span class="chip">🚗 3 xe • ~1.415km</span>
+    <span class="chip">🏨 8 đêm</span>
+    <span class="chip">👨‍👩‍👧 3 gia đình</span>
+  </div>
+</div>
+
+<div class="info-bar">
+  <div>
+    <div class="info-bar-txt">📱 Dữ liệu lưu trên máy này</div>
+    <div class="info-bar-note">Chia sẻ: chụp màn hình hoặc copy thủ công qua Zalo</div>
+  </div>
+</div>
+
+<!-- LỊCH TRÌNH -->
+<div class="sec on" id="s-lich">
+  <div class="sec-title">Lịch trình</div>
+  <div class="sec-sub">Nhấn vào từng ngày để xem chi tiết</div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#EBF2F9;color:#2B5F8E">1</div><div class="cht"><div class="cht-title">T7 25/04 — Bay vào • Ngủ Cam Ranh</div><div class="cht-sub">Hà Nội → Cam Ranh 20h35</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot"></div><div class="tt">20:35</div><div class="tb"><div class="tm">Hạ cánh Cam Ranh</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">21:00</div><div class="tb"><div class="tm">Nhận hành lý, lấy 3 xe (1 sedan + 2 SUV)</div></div></div>
+      <div class="tr"><div class="dot w"></div><div class="tt">21:30</div><div class="tb"><div class="tm">Check-in khách sạn Cam Ranh</div><div class="tn">Nghỉ gần sân bay — tránh lái đêm với trẻ nhỏ</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">22:00</div><div class="tb"><div class="tm">Ăn tối nhẹ gần khách sạn</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#EBF2F9;color:#2B5F8E">2</div><div class="cht"><div class="cht-title">CN 26/04 — Vĩnh Hy + Nha Trang</div><div class="cht-sub">Cam Ranh → Vĩnh Hy → Nha Trang</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot w"></div><div class="tt">06:00</div><div class="tb"><div class="tm">Check-out Cam Ranh, xuất phát đi Vĩnh Hy</div><div class="tn">~60km từ Cam Ranh • Đi sớm — nước trong nhất</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">07:30</div><div class="tb"><div class="tm">Đến Vĩnh Hy — tắm vịnh, kayak, lặn san hô</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">11:00</div><div class="tb"><div class="tm">Ăn trưa hải sản tại vịnh</div><div class="tn">12 người — đặt bàn trước</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">12:30</div><div class="tb"><div class="tm">Lái về Nha Trang (~100km, ~2h)</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">14:30</div><div class="tb"><div class="tm">Check-in Nha Trang</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">15:00</div><div class="tb"><div class="tm">Bảo tàng Hải dương học</div><div class="tn">Số 1 Cầu Đá • ~1,5h • Vé 40k/người lớn</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">17:00</div><div class="tb"><div class="tm">Tắm biển Trần Phú</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">19:00</div><div class="tb"><div class="tm">Ăn tối — đặt bàn trước cho 12 người</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#EBF2F9;color:#2B5F8E">3</div><div class="cht"><div class="cht-title">T2 27/04 — Nha Trang tự do</div><div class="cht-sub">Biển Trần Phú • Phố đi bộ</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot"></div><div class="tt">07:30</div><div class="tb"><div class="tm">Ăn sáng bún sứa đặc sản</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">09:00</div><div class="tb"><div class="tm">Tắm biển Trần Phú</div><div class="tn">Sóng nhỏ — phù hợp trẻ nhỏ</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">12:00</div><div class="tb"><div class="tm">Ăn trưa vào hẻm hoặc chợ</div><div class="tn">Tránh khu biển — rẻ hơn 30–40%</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">14:00</div><div class="tb"><div class="tm">Nghỉ trưa — trẻ em ngủ giấc</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">16:00</div><div class="tb"><div class="tm">Tắm biển chiều</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">19:00</div><div class="tb"><div class="tm">Ăn tối nem nướng Ninh Hòa</div></div></div>
+      <div class="tr"><div class="dot w"></div><div class="tt">21:30</div><div class="tb"><div class="tm">Chuẩn bị hành lý 3 gia đình</div><div class="tn">Check-out 7h sáng mai — xuất phát Quy Nhơn</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#FBF6E8;color:#8B6914">4</div><div class="cht"><div class="cht-title">T3 28/04 — Nha Trang → Quy Nhơn</div><div class="cht-sub">Ghềnh Đá Đĩa • Tháp Nhạn • Vũng Rô • Đèo Cả</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot w"></div><div class="tt">07:00</div><div class="tb"><div class="tm">Check-out, 3 xe xuất phát convoy</div><div class="tn">Giữ liên lạc Zalo khi di chuyển</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">08:30</div><div class="tb"><div class="tm">Ghềnh Đá Đĩa — Phú Yên</div><div class="tn">Đá basalt hình lục giác • Dừng ~1h</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">10:00</div><div class="tb"><div class="tm">Tháp Nhạn — Tuy Hòa (~45 phút)</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">11:00</div><div class="tb"><div class="tm">Ăn trưa Tuy Hòa — Bánh canh cá lóc</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">12:30</div><div class="tb"><div class="tm">Vũng Rô — tắm biển 45 phút</div></div></div>
+      <div class="tr"><div class="dot w"></div><div class="tt">14:00</div><div class="tb"><div class="tm">Đèo Cả (12km)</div><div class="tn">⚠ 3 xe đi cách nhau 200m — không vượt ẩu</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">17:00</div><div class="tb"><div class="tm">Check-in Quy Nhơn</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#FEF3EB;color:#C45000">5</div><div class="cht"><div class="cht-title">T4 29/04 — Eo Gió + Kỳ Co</div><div class="cht-sub">⚠ Ngày lễ — xuất phát trước 6h sáng</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot w"></div><div class="tt">05:30</div><div class="tb"><div class="tm">3 xe xuất phát ra Eo Gió</div><div class="tn">Ngày lễ RẤT ĐÔNG — bắt buộc đi trước 6h</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">06:00</div><div class="tb"><div class="tm">Eo Gió — địa hình đá granit</div><div class="tn">Trông chừng trẻ nhỏ — đá trơn</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">08:30</div><div class="tb"><div class="tm">Bãi Kỳ Co — tắm, thuê thuyền</div><div class="tn">~100k/người lớn • Nước xanh ngọc</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">13:00</div><div class="tb"><div class="tm">Về khách sạn, ăn trưa, nghỉ ngơi</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">19:00</div><div class="tb"><div class="tm">Bánh xèo tôm nhảy đặc sản Quy Nhơn</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#FEF3EB;color:#C45000">6</div><div class="cht"><div class="cht-title">T5 30/04 — Quy Nhơn → Huế</div><div class="cht-sub">⚠ Ngày lễ lớn • ~330km • Xuất phát 7h30</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot w"></div><div class="tt">07:30</div><div class="tb"><div class="tm">3 xe check-out, xuất phát</div><div class="tn">Ngày lễ đông — không ghé điểm nào giữa đường</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">12:30</div><div class="tb"><div class="tm">Check-in Huế (~330km, ~5h)</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">13:30</div><div class="tb"><div class="tm">Ăn trưa bún bò Huế</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">19:00</div><div class="tb"><div class="tm">Ăn tối cơm hến, bánh khoái</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#FEF3EB;color:#C45000">7</div><div class="cht"><div class="cht-title">T6 01/05 — Huế → Hà Tĩnh</div><div class="cht-sub">⚠ Ngày lễ 1/5 • ~310km • ~4h lái</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot"></div><div class="tt">08:00</div><div class="tb"><div class="tm">Check-out Huế, xuất phát</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">10:00</div><div class="tb"><div class="tm">Tùy chọn: ghé Đèo Ngang hoặc Cửa Tùng</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">12:00</div><div class="tb"><div class="tm">Ăn trưa — cho trẻ xuống vận động</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">14:00</div><div class="tb"><div class="tm">Check-in Hà Tĩnh</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">15:00</div><div class="tb"><div class="tm">Tắm biển Thiên Cầm</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">19:00</div><div class="tb"><div class="tm">Hải sản Hà Tĩnh — hàu, ngao, cá thu</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="card" onclick="tog(this)">
+    <div class="chdr"><div class="db" style="background:#EBF5EF;color:#1F6B3A">8</div><div class="cht"><div class="cht-title">T7 02/05 — Hà Tĩnh → Hà Nội 🏠</div><div class="cht-sub">~360km • ~4,5h • Chặng nhẹ nhàng nhất</div></div><div class="chev">▼</div></div>
+    <div class="cbody"><div class="tl">
+      <div class="tr"><div class="dot"></div><div class="tt">06:30</div><div class="tb"><div class="tm">Tắm biển sáng sớm lần cuối</div></div></div>
+      <div class="tr"><div class="dot"></div><div class="tt">09:00</div><div class="tb"><div class="tm">3 xe check-out, convoy về Hà Nội</div></div></div>
+      <div class="tr"><div class="dot w"></div><div class="tt">13:30</div><div class="tb"><div class="tm">🏠 Về đến Hà Nội</div></div></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- KHÁCH SẠN -->
+<div class="sec" id="s-hotel">
+  <div class="sec-title">Khách sạn</div>
+  <div class="sec-sub">Nhập thông tin sau khi đặt phòng</div>
+  <div class="local-note">💾 Dữ liệu lưu trên máy này. Sau khi nhập xong, chụp màn hình gửi Zalo cho cả đoàn.</div>
+  <div id="hotel-list"></div>
+</div>
+
+<!-- BẢN ĐỒ -->
+<div class="sec" id="s-map">
+  <div class="sec-title">Bản đồ</div>
+  <div class="sec-sub">Nhấn "Mở" để chỉ đường trên Google Maps</div>
+  <div class="card">
+    <div class="sublbl">Điểm dừng theo lộ trình</div>
+    <div style="padding:8px 16px 14px">
+      <div class="mr"><div class="mdot" style="background:#2B5F8E"></div><div class="mi"><div class="mname">Sân bay Cam Ranh</div><div class="msub">Hạ cánh 20h35 • 25/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Sân+bay+Quốc+tế+Cam+Ranh" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#2B5F8E"></div><div class="mi"><div class="mname">Vịnh Vĩnh Hy</div><div class="msub">Ninh Thuận • 26/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Vịnh+Vĩnh+Hy+Ninh+Thuận" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#2B5F8E"></div><div class="mi"><div class="mname">Bảo tàng Hải dương học</div><div class="msub">Số 1 Cầu Đá, Nha Trang • 26/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Bảo+tàng+Hải+dương+học+Nha+Trang" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#8B6914"></div><div class="mi"><div class="mname">Ghềnh Đá Đĩa</div><div class="msub">An Ninh Đông, Phú Yên • 28/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Ghềnh+Đá+Đĩa+Phú+Yên" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#8B6914"></div><div class="mi"><div class="mname">Tháp Nhạn — Tuy Hòa</div><div class="msub">Phú Yên • 28/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Tháp+Nhạn+Tuy+Hòa+Phú+Yên" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#8B6914"></div><div class="mi"><div class="mname">Vũng Rô</div><div class="msub">Phú Yên • 28/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Vũng+Rô+Phú+Yên" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#C45000"></div><div class="mi"><div class="mname">Eo Gió</div><div class="msub">Quy Nhơn • 29/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Eo+Gió+Quy+Nhơn+Bình+Định" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#C45000"></div><div class="mi"><div class="mname">Bãi Kỳ Co</div><div class="msub">Quy Nhơn • 29/04</div></div><a class="mbtn" href="https://www.google.com/maps/search/Kỳ+Co+Quy+Nhơn+Bình+Định" target="_blank">Mở</a></div>
+      <div class="mr"><div class="mdot" style="background:#1F6B3A"></div><div class="mi"><div class="mname">Hà Nội</div><div class="msub">Về nhà trưa 02/05</div></div><a class="mbtn" href="https://www.google.com/maps/search/Hà+Nội" target="_blank">Mở</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHI PHÍ -->
+<div class="sec" id="s-cost">
+  <div class="sec-title">Chi phí</div>
+  <div class="sec-sub">Ghi chép thực tế • Chia đều 3 gia đình</div>
+
+  <div id="exp-summary" style="display:none" class="exp-summary">
+    <div class="exp-top">
+      <div><div class="es-lbl">Tổng chi tiêu thực tế</div><div class="es-val" id="es-total">0đ</div><div class="es-sub" id="es-count">0 khoản</div></div>
+      <div style="text-align:right"><div class="es-lbl">Mỗi gia đình</div><div class="es-val" id="es-perfam">0đ</div></div>
+    </div>
+    <div class="family-split">
+      <div class="fs-item"><div class="fs-name">GĐ 1</div><div class="fs-amt" id="fs1">0đ</div></div>
+      <div class="fs-item"><div class="fs-name">GĐ 2</div><div class="fs-amt" id="fs2">0đ</div></div>
+      <div class="fs-item"><div class="fs-name">GĐ 3</div><div class="fs-amt" id="fs3">0đ</div></div>
+    </div>
+  </div>
+
+  <div class="local-note">💾 Dữ liệu lưu trên máy này. Để chia sẻ với cả đoàn, chụp màn hình gửi qua Zalo.</div>
+
+  <button class="add-btn" onclick="toggleForm()">＋ Thêm chi tiêu thực tế</button>
+
+  <div class="exp-form" id="exp-form">
+    <div style="font-weight:600;font-size:15px;margin-bottom:12px">Thêm chi tiêu</div>
+    <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Danh mục</div>
+    <div class="cat-row">
+      <button class="cat-btn on" data-c="🍜" onclick="pickCat(this)">🍜</button>
+      <button class="cat-btn" data-c="⛽" onclick="pickCat(this)">⛽</button>
+      <button class="cat-btn" data-c="🏨" onclick="pickCat(this)">🏨</button>
+      <button class="cat-btn" data-c="🎫" onclick="pickCat(this)">🎫</button>
+      <button class="cat-btn" data-c="🛍" onclick="pickCat(this)">🛍</button>
+      <button class="cat-btn" data-c="🚗" onclick="pickCat(this)">🚗</button>
+      <button class="cat-btn" data-c="💊" onclick="pickCat(this)">💊</button>
+      <button class="cat-btn" data-c="📦" onclick="pickCat(this)">📦</button>
+    </div>
+    <div class="field"><label>Mô tả</label><input id="f-desc" type="text" placeholder="Ăn tối hải sản Nha Trang..."></div>
+    <div class="frow" style="margin-bottom:12px">
+      <div class="field" style="margin-bottom:0"><label>Số tiền (đồng)</label><input id="f-amt" type="number" inputmode="numeric" placeholder="250000"></div>
+      <div class="field" style="margin-bottom:0"><label>Người nhập</label><input id="f-who" type="text" placeholder="Tên bạn"></div>
+    </div>
+    <div class="frow" style="margin-bottom:12px">
+      <div class="field" style="margin-bottom:0"><label>Gia đình</label>
+        <select class="sel-input" id="f-fam">
+          <option value="all">Cả đoàn (chia 3)</option>
+          <option value="gd1">Gia đình 1</option>
+          <option value="gd2">Gia đình 2</option>
+          <option value="gd3">Gia đình 3</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Ngày</label>
+        <select class="sel-input" id="f-day">
+          <option value="25/04">25/04 — Cam Ranh</option>
+          <option value="26/04">26/04 — Vĩnh Hy+NT</option>
+          <option value="27/04">27/04 — Nha Trang</option>
+          <option value="28/04">28/04 — → Quy Nhơn</option>
+          <option value="29/04">29/04 — Quy Nhơn</option>
+          <option value="30/04">30/04 — → Huế</option>
+          <option value="01/05">01/05 — → Hà Tĩnh</option>
+          <option value="02/05">02/05 — → Hà Nội</option>
+        </select>
+      </div>
+    </div>
+    <button class="submit-btn" onclick="addExp()">✓ Lưu chi tiêu</button>
+  </div>
+
+  <div id="exp-list"></div>
+
+  <div class="divider"></div>
+  <div style="font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding:0 2px">Dự toán ban đầu</div>
+  <div class="card" style="padding:16px">
+    <div class="csec">
+      <div class="clbl">Cố định — 3 xe</div>
+      <div class="crow"><div><div class="cname">Vé máy bay</div><div class="chint">6 người lớn • HN → Nha Trang</div></div><div class="camt" style="color:#2B5F8E">~18.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Gửi xe tàu</div><div class="chint">3 xe • HN → ga Nha Trang</div></div><div class="camt" style="color:#2B5F8E">~15.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Xăng 3 xe về</div><div class="chint">~1.415km × 3 xe</div></div><div class="camt" style="color:#2B5F8E">~7.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Phí cao tốc × 3</div></div><div class="camt" style="color:#2B5F8E">~1.140.000đ</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="csec">
+      <div class="clbl">Khách sạn (8 đêm × 3 gia đình)</div>
+      <div class="crow"><div><div class="cname">Cam Ranh • 1 đêm</div><div class="chint">25/04</div></div><div class="camt">~3.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Nha Trang • 2 đêm</div><div class="chint">26–27/04</div></div><div class="camt">~6.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Quy Nhơn ⚠ • 2 đêm</div><div class="chint">28–29/04 • đêm lễ</div></div><div class="camt" style="color:#C45000">~8.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Huế ⚠ • 1 đêm lễ lớn nhất</div></div><div class="camt" style="color:#C45000">~6.000.000đ</div></div>
+      <div class="crow"><div><div class="cname">Hà Tĩnh ⚠ • 1 đêm lễ</div></div><div class="camt" style="color:#C45000">~3.000.000đ</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="crow" style="padding:8px 0"><div><div class="cname" style="font-weight:600">Tổng trước dự phòng</div></div><div class="camt" style="font-size:15px">~67.000.000đ</div></div>
+    <div class="ctotal">
+      <div><div class="ctl">Tổng an toàn (+10%)</div><div style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:2px">Mỗi gia đình ~25 triệu</div></div>
+      <div class="cta">~74.000.000đ</div>
+    </div>
+  </div>
+</div>
+
+<!-- LƯU Ý -->
+<div class="sec" id="s-note">
+  <div class="sec-title">Lưu ý</div>
+  <div class="sec-sub">Quan trọng cho chuyến đi 3 gia đình</div>
+  <div class="wc"><div class="wct">⚠ Dịp lễ 29/4 – 1/5</div><div class="wcb">Eo Gió + Kỳ Co ngày 29/4 rất đông — 3 xe ra trước 6h sáng bắt buộc.<br><br>QL1A ngày 30/4 và 1/5 đông xe — convoy, giữ liên lạc Zalo.<br><br>Huế đêm 30/4 khó đặt nhất — <strong>đặt ngay hôm nay</strong>.</div></div>
+  <div class="wc"><div class="wct">⚠ Đèo Cả (ngày 28/4)</div><div class="wcb">12km, đường hẹp, nhiều xe tải — 3 xe đi cách nhau tối thiểu 200m, không vượt ẩu. Đoạn xuống phía Nam dốc hơn.</div></div>
+  <div class="ic"><div class="ict">🚗 Di chuyển 3 xe convoy</div><div class="icb">Lập nhóm Zalo "Phượt 2026" — báo khi dừng, khi đến điểm.<br>Thống nhất điểm hẹn nếu bị lạc nhau.<br>Xe đầu đi chậm hơn 10km/h để giữ đội hình.</div></div>
+  <div class="ic"><div class="ict">👶 6 trẻ em trên 3 xe</div><div class="icb">Dừng nghỉ 15–20 phút mỗi 1,5–2 tiếng — thống nhất điểm dừng chung.<br>Chuẩn bị thuốc say xe cho đoạn đèo.<br>Ngày 28/4 lái dài nhất — mang đủ đồ chơi, iPad.</div></div>
+  <div class="ic"><div class="ict">🍽 Ăn uống nhóm 12 người</div><div class="icb">Gọi đặt bàn trước — tránh chờ lâu với trẻ nhỏ.<br>Một số quán nhỏ không đủ chỗ — ưu tiên nhà hàng đặt được trước.<br>Quy Nhơn: cua, tôm hùm rẻ hơn Nha Trang đáng kể.</div></div>
+  <div class="ic"><div class="ict">🚂 Gửi 3 xe tàu</div><div class="icb">Gửi tại ga Giáp Bát — giờ 9h–17h, trừ Chủ Nhật.<br>Gửi trước ngày bay ít nhất 1 ngày.<br>Chụp ảnh toàn thân xe trước khi bàn giao.</div></div>
+</div>
+
+<nav class="nav">
+  <button class="nb on" onclick="go('lich',this)"><span class="ni">🗓</span>Lịch trình</button>
+  <button class="nb" onclick="go('hotel',this)"><span class="ni">🏨</span>Khách sạn</button>
+  <button class="nb" onclick="go('map',this)"><span class="ni">🗺</span>Bản đồ</button>
+  <button class="nb" onclick="go('cost',this)"><span class="ni">💰</span>Chi phí</button>
+  <button class="nb" onclick="go('note',this)"><span class="ni">⚠️</span>Lưu ý</button>
+</nav>
+
+<script>
+// ── STORAGE — dùng localStorage thật ─────────────────────
+function lsGet(key){ try{ const v=localStorage.getItem('phuot26_'+key); return v?JSON.parse(v):null; }catch(e){return null} }
+function lsSet(key,val){ try{ localStorage.setItem('phuot26_'+key,JSON.stringify(val)); return true; }catch(e){alert('Lỗi lưu dữ liệu: '+e.message); return false;} }
+function lsDel(key){ try{ localStorage.removeItem('phuot26_'+key); }catch(e){} }
+
+// ── NAV ──────────────────────────────────────────────────
+function go(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='hotel') renderHotels();
+  if(id==='cost') renderExp();
+}
+function tog(el){el.classList.toggle('open')}
+
+// ── HOTELS ───────────────────────────────────────────────
+const HOTELS=[
+  {id:'cr', num:'①', label:'Cam Ranh',  dates:'Đêm 25/04 (T7) • 1 đêm',        ci:'~21h30 ngày 25/4', co:'Sáng 26/4',  warn:false},
+  {id:'nt', num:'②', label:'Nha Trang', dates:'Đêm 26–27/04 (CN–T2) • 2 đêm',  ci:'~14h30 ngày 26/4', co:'Sáng 28/4',  warn:false},
+  {id:'qn', num:'③', label:'Quy Nhơn', dates:'Đêm 28–29/04 (T3–T4) • 2 đêm',   ci:'~17h ngày 28/4',   co:'Sáng 30/4',  warn:true, wt:'⚠ Đêm 29/4 là đêm lễ'},
+  {id:'hue',num:'④', label:'Huế',       dates:'Đêm 30/04 (T5) • 1 đêm',         ci:'~12h30 ngày 30/4', co:'Sáng 1/5',   warn:true, wt:'⚠ Đặt NGAY — đêm lễ lớn nhất'},
+  {id:'ht', num:'⑤', label:'Hà Tĩnh',  dates:'Đêm 01/05 (T6) • 1 đêm',         ci:'~14h ngày 1/5',    co:'Sáng 2/5',   warn:true, wt:'⚠ Đêm lễ 1/5'},
+];
+
+function renderHotels(){
+  const el=document.getElementById('hotel-list');
+  let html='';
+  for(const h of HOTELS){
+    const d=lsGet('h_'+h.id)||{};
+    const saved=!!d.name;
+    const bc=h.warn?'#FEF3EB':'#EBF2F9';
+    const tc=h.warn?'#C45000':'#2B5F8E';
+    html+=`<div class="hic">
+      <div class="hic-hdr">
+        <div class="hic-badge" style="background:${bc};color:${tc}">${h.num}</div>
+        <div class="hic-info"><div class="hic-title">${h.label}</div><div class="hic-sub">${h.dates}</div></div>
+        <span class="sbadge" style="background:${saved?'#EBF5EF':'#FEF3EB'};color:${saved?'#1F6B3A':'#C45000'}">${saved?'✓ Đã đặt':'Chưa đặt'}</span>
+      </div>
+      <div class="hic-body">
+        <div class="htimes"><div class="htime"><span>Check-in </span><b>${h.ci}</b></div><div class="htime"><span>Check-out </span><b>${h.co}</b></div></div>
+        ${h.warn?`<div><span class="badge bw">${h.wt}</span></div>`:''}
+        ${saved?`
+        <div class="saved-block">
+          ${d.name?`<div class="si-row"><span class="si-ico">🏨</span><span class="si-lbl">Tên KS</span><span class="si-val">${d.name}</span></div>`:''}
+          ${d.addr?`<div class="si-row"><span class="si-ico">📍</span><span class="si-lbl">Địa chỉ</span><span class="si-val">${d.addr}</span></div>`:''}
+          ${d.phone?`<div class="si-row"><span class="si-ico">📞</span><span class="si-lbl">SĐT</span><span class="si-val"><a href="tel:${d.phone}" style="color:var(--accent)">${d.phone}</a></span></div>`:''}
+          ${d.confirm?`<div class="si-row"><span class="si-ico">🔖</span><span class="si-lbl">Mã XN</span><span class="si-val" style="font-weight:700">${d.confirm}</span></div>`:''}
+          ${d.price?`<div class="si-row"><span class="si-ico">💰</span><span class="si-lbl">Giá/đêm</span><span class="si-val">${Number(d.price).toLocaleString('vi')}đ/phòng</span></div>`:''}
+          ${d.link?`<div class="si-row"><span class="si-ico">🔗</span><span class="si-lbl">Booking</span><a href="${d.link}" target="_blank" style="color:var(--accent);font-weight:500">Mở link</a></div>`:''}
+          ${d.maps?`<div class="si-row"><span class="si-ico">🗺</span><span class="si-lbl">Maps</span><a href="${d.maps}" target="_blank" style="color:var(--accent);font-weight:500">Google Maps</a></div>`:''}
+          ${d.note?`<div class="si-row"><span class="si-ico">📝</span><span class="si-lbl">Ghi chú</span><span class="si-val">${d.note}</span></div>`:''}
+        </div>
+        <button class="edit-btn" onclick="editH('${h.id}')">✏️ Chỉnh sửa</button>
+        `:`
+        <div style="margin-top:8px">
+          <div class="field"><label>Tên khách sạn *</label><input id="${h.id}-name" type="text" placeholder="VD: Khách sạn Biển Xanh"></div>
+          <div class="field"><label>Địa chỉ</label><input id="${h.id}-addr" type="text" placeholder="123 Trần Phú..."></div>
+          <div class="frow" style="margin-bottom:12px">
+            <div class="field" style="margin-bottom:0"><label>SĐT</label><input id="${h.id}-phone" type="tel" placeholder="0258..."></div>
+            <div class="field" style="margin-bottom:0"><label>Mã xác nhận</label><input id="${h.id}-confirm" type="text" placeholder="ABC123"></div>
+          </div>
+          <div class="field"><label>Giá/đêm/phòng (đ)</label><input id="${h.id}-price" type="number" inputmode="numeric" placeholder="900000"></div>
+          <div class="field"><label>Link booking</label><input id="${h.id}-link" type="url" placeholder="https://booking.com/..."></div>
+          <div class="field"><label>Link Google Maps</label><input id="${h.id}-maps" type="url" placeholder="https://maps.google.com/..."></div>
+          <div class="field"><label>Ghi chú (phòng số, yêu cầu...)</label><textarea id="${h.id}-note" placeholder="Phòng tầng cao, view biển, cần 3 phòng liền nhau..."></textarea></div>
+          <button class="save-btn" onclick="saveH('${h.id}')">💾 Lưu thông tin</button>
+        </div>`}
+      </div>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+function saveH(id){
+  const g=s=>(document.getElementById(id+'-'+s)||{value:''}).value.trim();
+  const d={name:g('name'),addr:g('addr'),phone:g('phone'),confirm:g('confirm'),price:g('price'),link:g('link'),maps:g('maps'),note:g('note')};
+  if(!d.name){alert('Vui lòng nhập tên khách sạn');return}
+  if(lsSet('h_'+id,d)) renderHotels();
+}
+
+function editH(id){
+  lsDel('h_'+id);
+  renderHotels();
+}
+
+// ── EXPENSES ─────────────────────────────────────────────
+let formOpen=false;
+let curCat='🍜';
+const FAM_LABELS={all:'Cả đoàn',gd1:'Gia đình 1',gd2:'Gia đình 2',gd3:'Gia đình 3'};
+
+function toggleForm(){
+  formOpen=!formOpen;
+  document.getElementById('exp-form').classList.toggle('show',formOpen);
+  if(formOpen) document.getElementById('f-desc').focus();
+}
+
+function pickCat(btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  curCat=btn.dataset.c;
+}
+
+function addExp(){
+  const desc=document.getElementById('f-desc').value.trim();
+  const amt=parseInt(document.getElementById('f-amt').value)||0;
+  const who=document.getElementById('f-who').value.trim();
+  const day=document.getElementById('f-day').value;
+  const fam=document.getElementById('f-fam').value;
+  if(!desc){alert('Vui lòng nhập mô tả');return}
+  if(!amt){alert('Vui lòng nhập số tiền');return}
+  if(!who){alert('Vui lòng nhập tên người nhập');return}
+  const list=lsGet('expenses')||[];
+  list.push({id:Date.now(),cat:curCat,desc,amt,who,day,fam,time:new Date().toLocaleTimeString('vi',{hour:'2-digit',minute:'2-digit'})});
+  if(lsSet('expenses',list)){
+    document.getElementById('f-desc').value='';
+    document.getElementById('f-amt').value='';
+    document.getElementById('f-who').value='';
+    formOpen=false;
+    document.getElementById('exp-form').classList.remove('show');
+    renderExp();
+  }
+}
+
+function delExp(id){
+  if(!confirm('Xóa khoản chi này?'))return;
+  const list=(lsGet('expenses')||[]).filter(e=>e.id!==id);
+  lsSet('expenses',list);
+  renderExp();
+}
+
+const DAYS=['25/04','26/04','27/04','28/04','29/04','30/04','01/05','02/05'];
+const DLBLS={'25/04':'T7 25/04 — Cam Ranh','26/04':'CN 26/04 — Vĩnh Hy+NT','27/04':'T2 27/04 — Nha Trang','28/04':'T3 28/04 — → Quy Nhơn','29/04':'T4 29/04 — Quy Nhơn','30/04':'T5 30/04 — → Huế','01/05':'T6 01/05 — → Hà Tĩnh','02/05':'T7 02/05 — → Hà Nội'};
+
+function renderExp(){
+  const list=lsGet('expenses')||[];
+  const summary=document.getElementById('exp-summary');
+  const el=document.getElementById('exp-list');
+  if(!list.length){
+    summary.style.display='none';
+    el.innerHTML=`<div class="empty"><div class="empty-ico">💸</div><div class="empty-txt">Chưa có khoản chi nào<br>Nhấn "＋ Thêm" để bắt đầu ghi chép</div></div>`;
+    return;
+  }
+  const total=list.reduce((s,e)=>s+e.amt,0);
+  const allShare=list.filter(e=>e.fam==='all').reduce((s,e)=>s+e.amt,0);
+  const perFam=Math.round(allShare/3);
+  const gd1=list.filter(e=>e.fam==='gd1').reduce((s,e)=>s+e.amt,0);
+  const gd2=list.filter(e=>e.fam==='gd2').reduce((s,e)=>s+e.amt,0);
+  const gd3=list.filter(e=>e.fam==='gd3').reduce((s,e)=>s+e.amt,0);
+  summary.style.display='block';
+  document.getElementById('es-total').textContent=total.toLocaleString('vi')+'đ';
+  document.getElementById('es-count').textContent=list.length+' khoản chi';
+  document.getElementById('es-perfam').textContent=Math.round(total/3).toLocaleString('vi')+'đ';
+  document.getElementById('fs1').textContent=(gd1+perFam).toLocaleString('vi')+'đ';
+  document.getElementById('fs2').textContent=(gd2+perFam).toLocaleString('vi')+'đ';
+  document.getElementById('fs3').textContent=(gd3+perFam).toLocaleString('vi')+'đ';
+  let html='';
+  for(const day of DAYS){
+    const items=list.filter(e=>e.day===day);
+    if(!items.length)continue;
+    const dt=items.reduce((s,e)=>s+e.amt,0);
+    html+=`<div class="day-grp">
+      <div class="day-grp-hdr"><div class="day-grp-title">${DLBLS[day]}</div><div class="day-grp-total">${dt.toLocaleString('vi')}đ</div></div>
+      <div class="card" style="padding:4px 16px">`;
+    for(const e of items){
+      html+=`<div class="exp-item">
+        <div class="exp-ico">${e.cat}</div>
+        <div class="exp-info"><div class="exp-name">${e.desc}</div><div class="exp-meta">${e.who} · ${e.time}</div></div>
+        <div class="exp-right"><div class="exp-amt">${e.amt.toLocaleString('vi')}đ</div><div class="exp-fam">${FAM_LABELS[e.fam]||e.fam}</div></div>
+        <button class="exp-del" onclick="delExp(${e.id})">×</button>
+      </div>`;
+    }
+    html+=`</div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ── INIT ─────────────────────────────────────────────────
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+renderHotels();
+renderExp();
+</script>
+</body>
+</html>
