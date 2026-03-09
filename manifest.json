@@ -1,0 +1,18 @@
+{
+  "name": "Phượt Miền Trung 2026",
+  "short_name": "Phượt 2026",
+  "description": "Lịch trình chuyến đi gia đình 25/04 - 02/05/2026",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#2B5F8E",
+  "theme_color": "#2B5F8E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
