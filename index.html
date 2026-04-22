@@ -127,6 +127,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .field input:focus, .field textarea:focus{border-color:var(--accent)}
 .save-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px}
 .save-btn:disabled{opacity:0.6}
+.item-row{display:flex;gap:6px;margin-bottom:8px;background:var(--alt);padding:8px;border-radius:10px;align-items:center}
+.item-row input{padding:8px !important;font-size:13px !important;border:1px solid var(--border) !important}
+.item-del{background:none;border:none;color:var(--warn);font-size:24px;cursor:pointer;padding:0 4px}
 </style>
 </head>
 <body>
@@ -387,13 +390,23 @@ window.openModal = function(id) {
 window.closeModal = () => document.getElementById('modal-ovl').classList.remove('on');
 
 function renderForm(t, d) {
-  if (t === 'lich') return `
-    <div class="field"><label>Thứ tự/Ngày</label><input id="f-day" value="${d.day||''}"></div>
-    <div class="field"><label>Tiêu đề</label><input id="f-title" value="${d.title||''}"></div>
-    <div class="field"><label>Mô tả phụ</label><input id="f-sub" value="${d.sub||''}"></div>
-    <div class="field"><label>Màu nền</label><input id="f-color" type="color" value="${d.color||'#2B5F8E'}"></div>
-    <div class="field"><label>Nội dung (HH:mm|Việc|Note|IconW)</label><textarea id="f-content" style="height:120px">${d.content||''}</textarea></div>`;
-  
+  if (t === 'lich') {
+    const items = d.content ? d.content.split('\n') : [];
+    const rows = items.map(l => {
+      const [time, task, note, warn] = l.split('|');
+      return renderItemRow(time, task, note, warn);
+    }).join('');
+    return `
+      <div class="field"><label>Thứ tự/Ngày</label><input id="f-day" value="${d.day||''}"></div>
+      <div class="field"><label>Tiêu đề</label><input id="f-title" value="${d.title||''}"></div>
+      <div class="field"><label>Mô tả phụ</label><input id="f-sub" value="${d.sub||''}"></div>
+      <div class="field"><label>Màu nền</label><input id="f-color" type="color" value="${d.color||'#2B5F8E'}" style="height:40px;padding:2px"></div>
+      <div class="field">
+        <label>Lịch trình chi tiết</label>
+        <div id="items-cont">${rows}</div>
+        <button class="act-btn" style="width:100%;margin-top:8px;border-style:dashed" onclick="addItemRow()">＋ Thêm hoạt động</button>
+      </div>`;
+  }
   if (t === 'hotel') return `
     <div class="field"><label>Thứ tự</label><input id="f-num" value="${d.num||''}"></div>
     <div class="field"><label>Điểm dừng</label><input id="f-label" value="${d.label||''}"></div>
@@ -401,6 +414,8 @@ function renderForm(t, d) {
     <div class="field"><label>Khách sạn</label><input id="f-name" value="${d.name||''}"></div>
     <div class="field"><label>Mã xác nhận</label><input id="f-confirm" value="${d.confirm||''}"></div>
     <div class="field"><label>Giá</label><input id="f-price" type="number" value="${d.price||''}"></div>
+    <div class="field"><label>Đặt cọc</label><input id="f-deposit" type="number" value="${d.deposit||''}"></div>
+    <div class="field"><label>Số điện thoại</label><input id="f-phone" value="${d.phone||''}"></div>
     <div class="field"><label>Maps Link</label><input id="f-maps" value="${d.maps||''}"></div>`;
 
   if (t === 'map') return `
@@ -440,8 +455,18 @@ window.handleSave = async function() {
   
   const g = i => (document.getElementById('f-'+i)||{}).value;
   let data = {};
-  if (type==='lich') data = { day:g('day'), title:g('title'), sub:g('sub'), color:g('color'), content:g('content') };
-  else if (type==='hotel') data = { num:g('num'), label:g('label'), dates:g('dates'), name:g('name'), confirm:g('confirm'), price:g('price'), maps:g('maps') };
+  if (type==='lich') {
+    const rows = document.querySelectorAll('.item-row');
+    const content = Array.from(rows).map(r => {
+      const t = r.querySelector('.i-t').value;
+      const m = r.querySelector('.i-m').value;
+      const n = r.querySelector('.i-n').value;
+      const w = r.querySelector('.i-w').checked;
+      return `${t}|${m}|${n}|${w}`;
+    }).join('\n');
+    data = { day:g('day'), title:g('title'), sub:g('sub'), color:g('color'), content:content };
+  }
+  else if (type==='hotel') data = { num:g('num'), label:g('label'), dates:g('dates'), name:g('name'), confirm:g('confirm'), price:g('price'), maps:g('maps'), phone:g('phone'), deposit:Number(g('deposit'))||0 };
   else if (type==='map') data = { name:g('name'), sub:g('sub'), link:g('link'), color:g('color') };
   else if (type==='note') data = { title:g('title'), body:g('body'), type:g('type') };
   else if (type==='expenses') data = { desc:g('desc'), amt:parseInt(g('amt'))||0, who:g('who'), fam:g('fam'), day:g('day'), time:(window.appData.expenses[id]||{}).time||new Date().toLocaleTimeString('vi',{hour:'2-digit',minute:'2-digit'}), cat:'🍜' };
@@ -498,7 +523,15 @@ function renderHotels(data) {
         <span class="sbadge" style="background:${d.name?'var(--glt)':'var(--wlt)'}">${d.name?'Đã đặt':'Chưa đặt'}</span>
       </div>
       <div class="hic-body">
-        ${d.name?`<div class="saved-block"><div style="font-weight:600">${d.name}</div><div style="font-size:12px;margin-top:4px">Mã: ${d.confirm||'--'} | Giá: ${(Number(d.price)||0).toLocaleString()}đ</div></div>`:''}
+        ${d.name?`
+          <div class="saved-block" style="padding:12px 16px;background:var(--bg)">
+            <div style="font-weight:600">${d.name}</div>
+            <div style="font-size:12px;margin-top:4px;color:var(--t2)">
+              Mã: <b>${d.confirm||'--'}</b> | Giá: <b>${(Number(d.price)||0).toLocaleString()}đ</b>
+              ${d.deposit ? ` | Cọc: <b style="color:var(--warn)">${(Number(d.deposit)||0).toLocaleString()}đ</b>` : ''}
+            </div>
+            ${d.phone ? `<div style="font-size:12px;margin-top:6px;display:flex;align-items:center;gap:4px">📞 <a href="tel:${d.phone}" style="color:var(--accent);text-decoration:none;font-weight:600">${d.phone}</a></div>` : ''}
+          </div>`:''}
         <div class="actions">
           <button class="act-btn edit" onclick="openModal('${id}')">Sửa</button>
           <button class="act-btn del" onclick="delItem('hotel','${id}')">Xóa</button>
@@ -618,6 +651,28 @@ onValue(ref(db, 'hotel'), s => renderHotels(s.val()));
 onValue(ref(db, 'map'), s => renderMaps(s.val()));
 onValue(ref(db, 'expenses'), s => renderExpenses(s.val()));
 onValue(ref(db, 'note'), s => renderNotes(s.val()));
+
+// HELPERS FOR DYNAMIC ROWS
+window.renderItemRow = (t='', m='', n='', w='false') => `
+  <div class="item-row">
+    <input class="i-t" placeholder="08:00" value="${t}" style="width:65px">
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+      <input class="i-m" placeholder="Hoạt động" value="${m}">
+      <input class="i-n" placeholder="Ghi chú" value="${n}" style="background:rgba(255,255,255,0.5)">
+    </div>
+    <div style="text-align:center;padding:0 4px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:2px">GẤP</div>
+      <input type="checkbox" class="i-w" ${w==='true'?'checked':''} style="width:18px;height:18px">
+    </div>
+    <button class="item-del" onclick="this.parentElement.remove()">×</button>
+  </div>`;
+
+window.addItemRow = () => {
+  const cont = document.getElementById('items-cont');
+  const div = document.createElement('div');
+  div.innerHTML = renderItemRow();
+  cont.appendChild(div.firstElementChild);
+};
 
 setStatus('ok', 'Đã kết nối');
 </script>
