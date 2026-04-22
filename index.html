@@ -92,6 +92,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .fs-item{flex:1;background:rgba(255,255,255,0.15);border-radius:12px;padding:10px;text-align:center}
 .fs-name{font-size:10px;opacity:0.8;margin-bottom:4px;text-transform:uppercase}
 .fs-amt{font-size:14px;font-weight:700}
+.fs-bal{font-size:11px;margin-top:4px;padding:2px 6px;border-radius:4px;display:inline-block}
+.bal-pos{background:rgba(76,175,80,0.2);color:#81C784}
+.bal-neg{background:rgba(244,67,54,0.2);color:#E57373}
 
 .exp-form{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh);padding:20px;margin-bottom:16px;display:none;border:1.5px solid var(--alt)}
 .exp-form.show{display:block;animation:slideDown 0.3s ease}
@@ -181,9 +184,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div style="text-align:right"><div class="es-lbl">Mỗi gia đình (chia 3)</div><div class="es-val" id="es-perfam">0đ</div></div>
     </div>
     <div class="family-split">
-      <div class="fs-item"><div class="fs-name">Tú Tam</div><div class="fs-amt" id="fs1">0đ</div></div>
-      <div class="fs-item"><div class="fs-name">Hào Chi</div><div class="fs-amt" id="fs2">0đ</div></div>
-      <div class="fs-item"><div class="fs-name">Tường Anh</div><div class="fs-amt" id="fs3">0đ</div></div>
+      <div class="fs-item"><div class="fs-name">Tú Tam</div><div class="fs-amt" id="fs1">0đ</div><div class="fs-bal" id="fb1"></div></div>
+      <div class="fs-item"><div class="fs-name">Hào Chi</div><div class="fs-amt" id="fs2">0đ</div><div class="fs-bal" id="fb2"></div></div>
+      <div class="fs-item"><div class="fs-name">Tường Anh</div><div class="fs-amt" id="fs3">0đ</div><div class="fs-bal" id="fb3"></div></div>
     </div>
   </div>
 
@@ -207,7 +210,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="field"><label>Mô tả chi tiêu</label><input id="x-desc" placeholder="Ví dụ: Ăn tối hải sản Nha Trang..."></div>
     <div class="frow" style="display:flex; gap:12px">
       <div class="field" style="flex:1"><label>Số tiền (đ)</label><input id="x-amt" type="number" placeholder="250000"></div>
-      <div class="field" style="flex:1"><label>Người nhập</label><input id="x-who" placeholder="Tên bạn"></div>
+      <div class="field" style="flex:1"><label>Người chi</label>
+        <select id="x-who">
+          <option value="gd1">Tú Tam</option>
+          <option value="gd2">Hào Chi</option>
+          <option value="gd3">Tường Anh</option>
+        </select>
+      </div>
     </div>
     <div class="frow" style="display:flex; gap:12px">
       <div class="field" style="flex:1"><label>Gia đình</label>
@@ -427,7 +436,11 @@ function renderForm(t, d) {
   if (t === 'expenses') return `
     <div class="field"><label>Mô tả chi tiêu</label><input id="f-desc" value="${d.desc||''}"></div>
     <div class="field"><label>Số tiền</label><input id="f-amt" type="number" value="${d.amt||''}"></div>
-    <div class="field"><label>Người chi</label><input id="f-who" value="${d.who||''}"></div>
+    <div class="field"><label>Người chi</label><select id="f-who">
+      <option value="gd1" ${d.who==='gd1'?'selected':''}>Tú Tam</option>
+      <option value="gd2" ${d.who==='gd2'?'selected':''}>Hào Chi</option>
+      <option value="gd3" ${d.who==='gd3'?'selected':''}>Tường Anh</option>
+    </select></div>
     <div class="field"><label>Gia đình</label><select id="f-fam">
       <option value="all" ${d.fam==='all'?'selected':''}>Cả đoàn (Chia 3)</option>
       <option value="gd1" ${d.fam==='gd1'?'selected':''}>Tú Tam</option>
@@ -570,9 +583,29 @@ function renderExpenses(data) {
   summary.style.display = 'block';
   document.getElementById('es-total').textContent = total.toLocaleString()+'đ';
   document.getElementById('es-perfam').textContent = Math.round(total/3).toLocaleString()+'đ';
-  document.getElementById('fs1').textContent = (gd1+perFam).toLocaleString()+'đ';
-  document.getElementById('fs2').textContent = (gd2+perFam).toLocaleString()+'đ';
-  document.getElementById('fs3').textContent = (gd3+perFam).toLocaleString()+'đ';
+  
+  const should1 = gd1 + perFam;
+  const should2 = gd2 + perFam;
+  const should3 = gd3 + perFam;
+  
+  document.getElementById('fs1').textContent = should1.toLocaleString()+'đ';
+  document.getElementById('fs2').textContent = should2.toLocaleString()+'đ';
+  document.getElementById('fs3').textContent = should3.toLocaleString()+'đ';
+
+  const paid1 = list.filter(e => e.who === 'gd1').reduce((s,e) => s+e.amt, 0);
+  const paid2 = list.filter(e => e.who === 'gd2').reduce((s,e) => s+e.amt, 0);
+  const paid3 = list.filter(e => e.who === 'gd3').reduce((s,e) => s+e.amt, 0);
+
+  const setBal = (id, val) => {
+    const el = document.getElementById(id);
+    if (val === 0) { el.textContent = 'Quyết toán xong'; el.className = 'fs-bal'; }
+    else if (val > 0) { el.textContent = 'Nhận: ' + val.toLocaleString() + 'đ'; el.className = 'fs-bal bal-pos'; }
+    else { el.textContent = 'Trả: ' + Math.abs(val).toLocaleString() + 'đ'; el.className = 'fs-bal bal-neg'; }
+  };
+
+  setBal('fb1', paid1 - should1);
+  setBal('fb2', paid2 - should2);
+  setBal('fb3', paid3 - should3);
   
   // RENDER DETAILED TABLE
   const tableCont = document.getElementById('exp-table-container');
@@ -622,7 +655,7 @@ function renderExpenses(data) {
         ${items.map(e => `
           <div class="exp-item" onclick="openModal('${e.id}')">
             <div class="exp-ico">${e.cat}</div>
-            <div class="exp-info"><div>${e.desc}</div><div style="font-size:11px;color:var(--t2)">${e.who} · ${e.time}</div></div>
+            <div class="exp-info"><div>${e.desc}</div><div style="font-size:11px;color:var(--t2)">${{gd1:'Tú Tam',gd2:'Hào Chi',gd3:'Tường Anh'}[e.who]||e.who} · ${e.time}</div></div>
             <div style="text-align:right"><div>${e.amt.toLocaleString()}đ</div><div style="font-size:10px;color:var(--t3)">${e.fam==='all'?'Cả đoàn':'Gia đình'}</div></div>
             <button class="exp-del" onclick="event.stopPropagation(); delItem('expenses','${e.id}')">×</button>
           </div>`).join('')}
