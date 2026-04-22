@@ -229,6 +229,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="field" style="flex:1"><label>Ngày</label>
         <select id="x-day">
+          <option value="Ứng trước">Ứng trước</option>
           <option value="25/04">25/04</option>
           <option value="26/04">26/04</option>
           <option value="27/04">27/04</option>
@@ -448,7 +449,7 @@ function renderForm(t, d) {
       <option value="gd3" ${d.fam==='gd3'?'selected':''}>Tường Anh</option>
     </select></div>
     <div class="field"><label>Ngày</label><select id="f-day">
-      ${['25/04','26/04','27/04','28/04','29/04','30/04','01/05','02/05'].map(v=>`<option value="${v}" ${d.day===v?'selected':''}>${v}</option>`).join('')}
+      ${['Ứng trước','25/04','26/04','27/04','28/04','29/04','30/04','01/05','02/05'].map(v=>`<option value="${v}" ${d.day===v?'selected':''}>${v}</option>`).join('')}
     </select></div>`;
 
   if (t === 'note') return `
@@ -618,7 +619,7 @@ function renderExpenses(data) {
   tableCont.style.display = 'block';
   
   let tableHtml = '';
-  const dayOrder = ['25/04','26/04','27/04','28/04','29/04','30/04','01/05','02/05'];
+  const dayOrder = ['Ứng trước','25/04','26/04','27/04','28/04','29/04','30/04','01/05','02/05'];
   
   dayOrder.forEach(day => {
     const items = list.filter(e => e.day===day);
