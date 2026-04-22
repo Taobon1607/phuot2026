@@ -549,8 +549,10 @@ function renderHotels(data) {
               ${d.deposit ? ` | Cọc: <b style="color:var(--warn)">${(Number(d.deposit)||0).toLocaleString()}đ</b>` : ''}
             </div>
             ${d.phone ? `<div style="font-size:12px;margin-top:6px;display:flex;align-items:center;gap:4px">📞 <a href="tel:${d.phone}" style="color:var(--accent);text-decoration:none;font-weight:600">${d.phone}</a></div>` : ''}
+            ${d.maps ? `<div style="font-size:12px;margin-top:6px;display:flex;align-items:center;gap:4px">📍 <a href="${d.maps}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600">Xem bản đồ</a></div>` : ''}
           </div>`:''}
         <div class="actions">
+          ${d.maps ? `<a class="act-btn edit" href="${d.maps}" target="_blank" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">📍 Bản đồ</a>` : ''}
           <button class="act-btn edit" onclick="openModal('${id}')">Sửa</button>
           <button class="act-btn del" onclick="delItem('hotel','${id}')">Xóa</button>
         </div>
