@@ -504,7 +504,11 @@ function renderItinerary(data) {
   window.appData.lich = data || {};
   const el = document.getElementById('itinerary-list');
   if (!data) { el.innerHTML = '<div class="empty">Trống</div>'; return; }
-  el.innerHTML = Object.entries(data).sort((a,b)=>a[1].day.localeCompare(b[1].day)).map(([id, d])=>`
+  el.innerHTML = Object.entries(data).sort((a,b)=>{
+    const d1 = a[1].day.split('/').reverse().join('');
+    const d2 = b[1].day.split('/').reverse().join('');
+    return d1.localeCompare(d2);
+  }).map(([id, d])=>`
     <div class="card">
       <div class="chdr" onclick="tog(this.parentElement)">
         <div class="db" style="background:${d.color}22;color:${d.color}">${d.day}</div>

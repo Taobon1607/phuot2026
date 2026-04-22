@@ -106,5 +106,77 @@ def import_data():
     res = requests.patch(f"{DB_URL}/hotel.json", json=hotel_data)
     print(f"Updated hotels: {res.status_code}")
 
+    # --- Load Itinerary (Sheet 'Lịch trình tham quan') ---
+    df_itinerary = pd.read_excel(file_path, sheet_name='Lịch trình tham quan')
+    df_itinerary = df_itinerary.where(pd.notnull(df_itinerary), None)
+    
+    # We will manually map the itinerary from the text provided in the sheet/image
+    # Since the sheet is unstructured text, we'll create the structured objects
+    itinerary = [
+        {
+            "day": "25/04", "title": "Ngày 1: Đến Nha Trang", "sub": "Check-in & Nghỉ ngơi", "color": "#2B5F8E",
+            "content": "22:00|Check-in|Dự kiến 22h00|false\n--|Nghỉ ngơi|Chọn KS gần Bãi Dài hoặc trung tâm|false"
+        },
+        {
+            "day": "26/04", "title": "Ngày 2: Nha Trang - Vĩnh Hy", "sub": "Cung đường biển đẹp nhất", "color": "#1F6B3A",
+            "content": "07:30|Di chuyển|Đi Vĩnh Hy (100km) qua Đầm Thủy Triều|false\n09:00|Tham quan|Hang Rái & Vịnh Vĩnh Hy (cano đáy kính)|false\n12:00|Ăn trưa|Hải sản nhà bè Út Thành hoặc Vui Vẻ|false\n13:30|Hái nho|Ghé Vườn nho Thái An|false\n19:00|Ăn tối|Nem nướng Đặng Văn Quyên hoặc Bò Lạc Cảnh|false"
+        },
+        {
+            "day": "27/04", "title": "Ngày 3: Nha Trang City", "sub": "Tham quan thành phố", "color": "#C45000",
+            "content": "08:00|Tham quan|Viện Hải dương học & Tháp Bà Ponagar|false\n14:00|Vui chơi|Tắm biển hoặc VinWonders|false\n18:00|Ăn uống|Bún sứa Năm Beo hoặc Cơm Niêu Thiên Lý|false"
+        },
+        {
+            "day": "28/04", "title": "Ngày 4: Nha Trang - Quy Nhơn", "sub": "Hành trình 215km", "color": "#2B5F8E",
+            "content": "07:00|Check-out|Xuất phát đi Quy Nhơn|false\n09:00|Dừng chân|Ghềnh Đá Đĩa & Tháp Nhạn (Phú Yên)|false\n12:00|Ăn trưa|Cơm gà Tuyết Nhung (Tuy Hòa)|false\n17:00|Check-in|Quy Nhơn, tối dạo phố Ngô Văn Sở|false"
+        },
+        {
+            "day": "29/04", "title": "Ngày 5: Kỳ Co - Eo Gió", "sub": "Thiên đường biển đảo", "color": "#1F6B3A",
+            "content": "08:00|Biển đảo|Cano ra đảo Kỳ Co & check-in Eo Gió|false\n14:00|Tâm linh|Thăm Tịnh xá Ngọc Hòa|false\n18:00|Hải sản|Quán Hướng Dương hoặc Hoàng Thao (Nhơn Lý)|false"
+        },
+        {
+            "day": "30/04", "title": "Ngày 6: Quy Nhơn - Huế", "sub": "Chặng dài nhất 400km", "color": "#C45000",
+            "content": "06:00|Xuất phát|Chặng dài 7-8 tiếng, đi sớm|true\n13:00|Check-in|Đến Huế, nghỉ ngơi|false\n15:00|Cố đô|Tham quan Đại Nội & Chùa Thiên Mụ|false\n19:00|Ẩm thực|Bánh Bà Đỏ, nghe ca Huế sông Hương|false"
+        },
+        {
+            "day": "01/05", "title": "Ngày 7: Huế - Hà Tĩnh", "sub": "Hành trình 310km", "color": "#2B5F8E",
+            "content": "07:00|Ăn sáng|Bún bò Huế O Phượng/Mệ Kéo|false\n10:00|Di chuyển|Ghé Vũng Chùa viếng mộ Đại tướng|false\n14:00|Hà Tĩnh|Check-in biển Thiên Cầm|false\n16:00|Di tích|Ghé Ngã ba Đồng Lộc|false\n18:00|Đặc sản|Mực nhảy Vũng Áng, kẹo Cu Đơ|false"
+        }
+    ]
+
+    print("Clearing old itinerary...")
+    requests.delete(f"{DB_URL}/lich.json")
+    
+    print("Uploading new itinerary...")
+    iti_data = {str(int(time.time()*1000) + i): d for i, d in enumerate(itinerary)}
+    requests.patch(f"{DB_URL}/lich.json", json=iti_data)
+    print("Itinerary updated!")
+
+    # --- Add Notes ---
+    notes = [
+        {
+            "title": "Kiểm tra xe cá nhân",
+            "body": "Trước khi đi, hãy kiểm tra lốp, phanh và dầu nhớt vì chặng đường tổng cộng khoảng hơn 1.000km.",
+            "type": "warn"
+        },
+        {
+            "title": "Đặt phòng/Nhà hàng",
+            "body": "Ngày 29/04 - 01/05 là đỉnh điểm lễ. Nên chốt đặt phòng ngay và gọi điện đặt bàn trước tại các nhà hàng nổi tiếng.",
+            "type": "warn"
+        },
+        {
+            "title": "Chú ý tốc độ",
+            "body": "Chú ý các biển báo hạn chế tốc độ tại khu vực dân cư ở Phú Yên và Quảng Bình (thường xuyên có kiểm soát tốc độ).",
+            "type": "info"
+        }
+    ]
+
+    print("Clearing old notes...")
+    requests.delete(f"{DB_URL}/note.json")
+    
+    print("Uploading new notes...")
+    note_data = {str(int(time.time()*1000) + i): n for i, n in enumerate(notes)}
+    requests.patch(f"{DB_URL}/note.json", json=note_data)
+    print("Notes updated!")
+
 if __name__ == "__main__":
     import_data()
